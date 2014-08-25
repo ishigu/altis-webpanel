@@ -81,7 +81,7 @@ class Player {
     public function __construct() {
         $this->uid = 0;
         $this->name = "";
-        $this->playerid = 0;
+        $this->playerid = "0";
         $this->cash = 0;
         $this->bankacc = 0;
         $this->coplevel = "0";
@@ -97,7 +97,7 @@ class Player {
         $this->civ_gear = "";
         $this->blacklist = 0;
         $this->reb_gear = "";
-        $this->rebellevel = 0;
+        $this->rebellevel = "0";
     }
 }
 
