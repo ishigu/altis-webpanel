@@ -16,10 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-define('SMARTY_DIR', str_replace("\\","/",getcwd()).'/libs/Smarty/');
-$db = new PDO('mysql:dbname=arma3life;host=127.0.0.1', "arma", "password");
+require_once("include/classes/Player.php");
 
-$theme = "binary";
-$title = "Westerland Altis Life Panel";
+$page = "overview";
+if (isset($_REQUEST['action']))
+    switch (sanitize_paranoid_string($_REQUEST['action'])) {
+        case 'edit': $page = "edit"; break;
+    }
+require('sections/players/'.$page.'.php');
 
 ?>

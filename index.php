@@ -19,10 +19,7 @@
 require("config.inc.php");
 require(SMARTY_DIR . "Smarty.class.php");
 require("libs/sanitize.lib.php");
-
-$theme = "simple";
-$title = "Westerland Altis Life Panel";
-$site_encoding = "utf-8";
+require("libs/BootPagination/pagination.php");
 
 /**
  * Initialize Libraries
@@ -31,27 +28,14 @@ $smarty = new Smarty;
 $smarty->template_dir = 'templates/' . $theme;
 $smarty->compile_dir = 'cache/compiled';
 $smarty->cache_dir = 'cache';
-$smarty->error_reporting = E_ALL  & ~E_NOTICE;
+$smarty->error_reporting = E_ALL;//  & ~E_NOTICE;
+//$smarty->debugging = true;
+$smarty->caching = 0;
 
 /**
- * Show our content
+ * Prepare to show our content
  */
 ob_start();
-
-/**
- * Display header & menu
- */
-$smarty->assign('title',$title);
-$smarty->assign('site_encoding',$site_encoding);
-$smarty->assign('theme',$theme);
-$smarty->display('header.tpl');
-$smarty->clearAllAssign();
-
-/**
- * Display content
- *
- * Get page from $_GET and include it
- */
 $page = 'index'; //default page
 if (isset($_GET['page']))
 {
@@ -59,6 +43,20 @@ if (isset($_GET['page']))
     if (file_exists('sections/'.$file.'/index.php'))
         $page = $file;
 }
+$username = "ishi"; // TEMP
+
+/**
+ * Display header & menu
+ */
+$smarty->assign('title',$title);
+$smarty->assign('theme',$theme);
+$smarty->assign('username', $username);
+$smarty->display('header.tpl');
+$smarty->clearAllAssign();
+
+/**
+ * Display content
+ */
 require('sections/'.$page.'/index.php');
 
 /**
