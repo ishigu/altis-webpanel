@@ -131,6 +131,12 @@ class Player {
         return get_object_vars($this);
     }
     
+    public function parseAliases() {
+        $parsed = parseBISArray($this->aliases);
+        //print_r($parsed); print "\n\n\n";
+        return str_replace(chr(96), "", implode(", ", $parsed));
+    }
+    
     public static function searchPlayer($str, $sortby = "uid", $order = "DESC", $start = 0, $count = 100) {
         global $db;
         /* @var $db PDO */

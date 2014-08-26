@@ -20,6 +20,7 @@ require("config.inc.php");
 require(SMARTY_DIR . "Smarty.class.php");
 require("libs/sanitize.lib.php");
 require("libs/BootPagination/pagination.php");
+require("include/misc.functions.php");
 
 /**
  * Initialize Libraries

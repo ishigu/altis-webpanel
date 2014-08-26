@@ -30,6 +30,7 @@
                                 <th>Id</th>
                                 <th>PlayerId</th>
                                 <th>Name</th>
+                                <th>Aliases</th>
                                 <th>Cash</th>
                                 <th>Bank</th>
                                 <th>Donator</th>
@@ -69,6 +70,7 @@
                                 <td>{$plr->getUid()}</td>
                                 <td>{$plr->getPlayerID()}</td>
                                 <td>{$plr->getName()}</td>
+                                <td>{$plr->parseAliases()}</td>
                                 <td>{$plr->getCash()}</td>
                                 <td>{$plr->getBankAcc()}</td>
                                 <td>{$plr->getDonatorLevel()}</td>
