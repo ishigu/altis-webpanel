@@ -38,6 +38,7 @@ class Player {
     private $blacklist;
     private $reb_gear;
     private $rebellevel;
+    public static $fields = '`uid`, `name`, `playerid`, `cash`, `bankacc`, `coplevel`, `cop_licenses`, `civ_licenses`, `med_licenses`, `cop_gear`, `mediclevel`, `arrested`, `aliases`, `adminlevel`, `donatorlvl`, `civ_gear`, `blacklist`, `reb_gear`, `rebellevel`';
     
     public function getUID() { return $this->uid; }
     public function setUID($d) { $this->uid = $d; }
@@ -105,6 +106,7 @@ class Player {
             switch ($field) {
                 case 'uid': $this->uid = $value; break;
                 case 'name': $this->name = $value; break;
+                case 'playerid': $this->playerid = $value; break;
                 case 'cash': $this->cash = $value; break;
                 case 'bankacc': $this->bankacc = $value; break;
                 case 'coplevel': $this->coplevel = $value; break;
@@ -129,7 +131,79 @@ class Player {
         return get_object_vars($this);
     }
     
-    public static function getPlayerDBCount(){
+    public static function searchPlayer($str, $sortby = "uid", $order = "DESC", $start = 0, $count = 100) {
+        global $db;
+        /* @var $db PDO */
+        if ($order != "DESC") $order = "ASC";
+        $sortby = sanitize_paranoid_string($sortby);
+        
+        // Is $str a uid?
+        $str_n = sanitize_int($str);
+        // Is $str a name/in aliases/a playerid?
+        $str_s = sanitize_sql_string($str);
+        
+        //Empty search?
+        if (empty($str_s) && empty($str_n))
+            return array(); // Return empty array
+
+        $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players WHERE `name` LIKE :name OR `aliases` LIKE :aliases OR `uid` = :uid OR `playerid` LIKE :playerid ORDER BY ' . $sortby . ' ' . $order . ' LIMIT :start , :count');
+        $stmt->bindValue(':name', "%".$str_s."%", PDO::PARAM_STR);
+        $stmt->bindValue(':aliases', "%".$str_s."%", PDO::PARAM_STR);
+        $stmt->bindValue(':uid', $str_n, PDO::PARAM_INT);
+        $stmt->bindValue(':playerid', $str_s, PDO::PARAM_STR); // playerid is VARCHAR
+        $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+        $stmt->bindValue(':count', $count, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = array();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $row) {
+            $plr = new Player();
+            $plr->fill($row);
+            
+            $result[] = $plr;
+        }
+        
+        return $result;
+    }
+    
+    public static function getPlayerByUid($uid) {
+        global $db;
+        /* @var $db PDO */
+        $uid = parse_int(sanitize_int($uid));
+
+        $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players WHERE `uid` = :uid LIMIT 1');
+        $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($result) == 0) return null;
+        
+        $plr = new Player();
+        $plr->fill($result[0]);
+        
+        return $plr;
+    }
+    
+    public static function getPlayerByPlayerID($pid) {
+        global $db;
+        /* @var $db PDO */
+        $pid = sanitize_paranoid_string($pid);
+
+        $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players WHERE `playerid` = :pid LIMIT 1');
+        $stmt->bindValue(':pid', $pid, PDO::PARAM_STR);
+        $stmt->execute();
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($result) == 0) return null;
+        
+        $plr = new Player();
+        $plr->fill($result[0]);
+        
+        return $plr;
+    }
+    
+    public static function getPlayerDBCount() {
         global $db;
         /* @var $db PDO */
         
@@ -145,11 +219,9 @@ class Player {
         /* @var $db PDO */
         if ($order != "DESC") $order = "ASC";
         $sortby = sanitize_paranoid_string($sortby);
-        $stmt = $db->prepare('SELECT `uid`, `name`, `playerid`, `cash`, `bankacc`, `coplevel`, `cop_licenses`, `civ_licenses`, `med_licenses`, '
-                . '`cop_gear`, `mediclevel`, `arrested`, `aliases`, `adminlevel`, `donatorlvl`, `civ_gear`, `blacklist`, `reb_gear`, `rebellevel` '
-                . 'FROM players ORDER BY ' . $sortby . ' ' . $order . ' LIMIT :start , :count');
-        $stmt->bindParam(':start', $start, PDO::PARAM_INT);
-        $stmt->bindParam(':count', $count, PDO::PARAM_INT);
+        $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players ORDER BY ' . $sortby . ' ' . $order . ' LIMIT :start, :count');
+        $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+        $stmt->bindValue(':count', $count, PDO::PARAM_INT);
         $stmt->execute();
         
         $result = array();

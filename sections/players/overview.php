@@ -22,24 +22,41 @@
 
 // Pagination Variables
 $pagenum = isset($_REQUEST['pagenum']) ? sanitize_int($_REQUEST['pagenum']) : 1;
+if ($pagenum < 0) $pagenum = 0;
+
 $pagesize = 50; // TODO: Make it dynamic
-$start = $pagenum*$pagesize;
+$start = ($pagenum - 1)*$pagesize;
+
+// Search
+$searchstr = isset($_REQUEST['search']) ? sanitize_sql_string(urldecode($_REQUEST['search'])) : "";
+$count = 0;
+$searchparam = "";
+$smarty->assign('search', 0);
+if (!empty($searchstr)) {
+    $playerList = Player::searchPlayer($searchstr, "uid", "DESC", $start, $pagesize);
+    $count = count($playerList);
+    $searchparam = "&amp;search=".urlencode($searchstr);
+    $smarty->assign('searchstring', $searchstr);
+    $smarty->assign('search', 1);
+}
 
 // Generate Pagination
 $pg = new bootPagination();
 $pg->pagenumber = $pagenum;
 $pg->pagesize = $pagesize;
-$pg->totalrecords = Player::getPlayerDBCount();
+$pg->totalrecords = $count > 0 ? $count : Player::getPlayerDBCount();
 $pg->showfirst = true;
 $pg->showlast = true;
 $pg->paginationcss = "pagination-large";
 $pg->paginationstyle = 1; // 1: advance, 0: normal
-$pg->defaultUrl = "index.php?page=players&action=index";
-$pg->paginationUrl = "index.php?page=players&action=index&pagenum=[p]";
+$pg->defaultUrl = "index.php?page=players&amp;action=index".$searchparam;
+$pg->paginationUrl = "index.php?page=players&amp;action=index&amp;pagenum=[p]".$searchparam;
 
-// Get Players
-$playerList = Player::getPlayers("uid", "DESC", $start, $pagesize);
-//var_dump($playerList);
+// Get Players (if not a search request)
+if (empty($searchparam)) {
+    $playerList = Player::getPlayers("uid", "DESC", $start, $pagesize);
+    //var_dump($playerList);
+}
 
 $smarty->assign('players', $playerList);
 $smarty->assign('pagination', $pg->process());

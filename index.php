@@ -51,6 +51,7 @@ $username = "ishi"; // TEMP
 $smarty->assign('title',$title);
 $smarty->assign('theme',$theme);
 $smarty->assign('username', $username);
+$smarty->assign('page', $page);
 $smarty->display('header.tpl');
 $smarty->clearAllAssign();
 
