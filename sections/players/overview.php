@@ -29,11 +29,17 @@ $start = ($pagenum - 1)*$pagesize;
 
 // Search
 $searchstr = isset($_REQUEST['search']) ? sanitize_sql_string(urldecode($_REQUEST['search'])) : "";
+$sortby = isset($_REQUEST['sortby']) ? sanitize_sql_string(urldecode($_REQUEST['sortby'])) : "";
+if (!in_array($sortby, array("uid", "playerid", "name", "cash", "bankacc", "donatorlvl", "coplevel", "mediclevel", "rebellevel","adminlevel")))
+    $sortby = "uid";
+$order = isset($_REQUEST['order']) ? sanitize_sql_string(urldecode($_REQUEST['order'])) : "";
+if ($order != "ASC")
+    $order = "DESC";
 $count = 0;
 $searchparam = "";
 $smarty->assign('search', 0);
 if (!empty($searchstr)) {
-    $playerList = Player::searchPlayer($searchstr, "uid", "DESC", $start, $pagesize);
+    $playerList = Player::searchPlayer($searchstr, $sortby, $order, $start, $pagesize);
     $count = count($playerList);
     $searchparam = "&amp;search=".urlencode($searchstr);
     $smarty->assign('searchstring', $searchstr);
@@ -54,12 +60,14 @@ $pg->paginationUrl = "index.php?page=players&amp;action=index&amp;pagenum=[p]".$
 
 // Get Players (if not a search request)
 if (empty($searchparam)) {
-    $playerList = Player::getPlayers("uid", "DESC", $start, $pagesize);
+    $playerList = Player::getPlayers($sortby, $order, $start, $pagesize);
     //var_dump($playerList);
 }
 
 $smarty->assign('players', $playerList);
 $smarty->assign('pagination', $pg->process());
+$smarty->assign('sortby', $sortby);
+$smarty->assign('order', $order);
 $smarty->display('players/overview.tpl');
 $smarty->clearAllAssign();
 ?>

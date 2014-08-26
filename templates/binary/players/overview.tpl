@@ -27,17 +27,17 @@
                     <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                         <thead>
                             <tr>
-                                <th>Id</th>
-                                <th>PlayerId</th>
-                                <th>Name</th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=uid&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">Id{if $sortby eq "uid"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=playerid&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">PlayerId{if $sortby eq "playerid"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=name&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">Name{if $sortby eq "name"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
                                 <th>Aliases</th>
-                                <th>Cash</th>
-                                <th>Bank</th>
-                                <th>Donator</th>
-                                <th>CopLevel</th>
-                                <th>MedicLevel</th>
-                                <th>RebelLevel</th>
-                                <th>AdminLevel</th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=cash&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">Cash{if $sortby eq "cash"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=bankacc&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">Bank{if $sortby eq "bankacc"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=donatorlvl&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">Donator{if $sortby eq "donatorlvl"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=coplevel&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">CopLevel{if $sortby eq "coplevel"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=mediclevel&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">MedicLevel{if $sortby eq "mediclevel"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=rebellevel&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">RebelLevel{if $sortby eq "rebellevel"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
+                                <th><a href="index.php?page=players&amp;action=index&amp;sortby=adminlevel&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">AdminLevel{if $sortby eq "adminlevel"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
                             </tr>
                         </thead>
                         <tbody>
