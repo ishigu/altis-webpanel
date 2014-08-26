@@ -29,7 +29,8 @@ class Vehicle {
     private $color;
     private $inventory;
     private $impound;
-    
+    public static $fields = '`id`, `side`, `classname`, `type`, `pid`, `alive`, `active`, `plate`, `color`, `inventory`, `impound`';
+
     public function getId() { return $this->id; }
     public function setId($d) { $this->id = $d; }
     public function getSide() { return $this->side; }
@@ -65,6 +66,141 @@ class Vehicle {
         $this->color = 0;
         $this->inventory = "";
         $this->impound = 0;
+    }
+    
+    public function fill($data) {
+        foreach ($data as $field => $value) {
+            switch ($field) {
+                case 'id': $this->id = $value; break;
+                case 'side': $this->side = $value; break;
+                case 'classname': $this->classname = $value; break;
+                case 'type': $this->type = $value; break;
+                case 'pid': $this->pid = $value; break;
+                case 'alive': $this->alive = $value; break;
+                case 'active': $this->active = $value; break;
+                case 'plate': $this->plate = $value; break;
+                case 'color': $this->color = $value; break;
+                case 'inventory': $this->inventory = $value; break;
+                case 'impound': $this->impound = $value; break;
+            }
+        }
+    }
+    
+    public function toArray() {
+        return get_object_vars($this);
+    }
+    
+    public static function searchVehicle($str, $sortby = "id", $order = "DESC", $start = 0, $count = 100) {
+        global $db;
+        /* @var $db PDO */
+        if ($order != "DESC") $order = "ASC";
+        $sortby = sanitize_paranoid_string($sortby);
+        
+        // Is $str an id?
+        $str_n = sanitize_int($str);
+        // Is $str a classname/side/playerid/type/(class)?
+        $str_s = sanitize_sql_string($str);
+        
+        //Empty search?
+        if (empty($str_s) && empty($str_n))
+            return array(); // Return empty array
+        
+        // Search for vehicle classes (names) instead of just classnames
+        $classes = Vehicle::searchClassname($str_s);
+        $classes = implode(",", $classes);
+
+        $stmt = $db->prepare('SELECT '.Vehicle::$fields.' FROM vehicles WHERE `side` LIKE :side OR `classname` LIKE :classname OR FIND_IN_SET( `classname`, :classes ) OR `id` = :id OR `pid` LIKE :pid OR `type` LIKE :type ORDER BY ' . $sortby . ' ' . $order . ' LIMIT :start , :count');
+        $stmt->bindValue(':side', $str_s, PDO::PARAM_STR);
+        $stmt->bindValue(':classname', $str_s, PDO::PARAM_STR);
+        $stmt->bindValue(':classes', $classes, PDO::PARAM_STR);
+        $stmt->bindValue(':id', $str_n, PDO::PARAM_INT);
+        $stmt->bindValue(':pid', $str_s, PDO::PARAM_STR); // pid is VARCHAR
+        $stmt->bindValue(':type', $str_s, PDO::PARAM_STR);
+        $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+        $stmt->bindValue(':count', $count, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = array();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $row) {
+            $veh = new Vehicle();
+            $veh->fill($row);
+            
+            $result[] = $veh;
+        }
+        
+        return $result;
+    }
+    
+    public static function getVehicleDBCount() {
+        global $db;
+        /* @var $db PDO */
+        
+        $count = $db->query('SELECT COUNT(*) FROM vehicles')->fetchColumn();
+        if (!isset($count))
+            return 0;
+        else
+            return $count;
+    }
+    
+    public static function getVehicles($sortby = "id", $order = "DESC", $start = 0, $count = 100) {
+        global $db;
+        /* @var $db PDO */
+        if ($order != "DESC") $order = "ASC";
+        $sortby = sanitize_paranoid_string($sortby);
+        $stmt = $db->prepare('SELECT '.Vehicle::$fields.' FROM vehicles ORDER BY ' . $sortby . ' ' . $order . ' LIMIT :start, :count');
+        $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+        $stmt->bindValue(':count', $count, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $result = array();
+        
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $row) {
+            $veh = new Vehicle();
+            $veh->fill($row);
+            
+            $result[] = $veh;
+        }
+        
+        return $result;
+    }
+    
+    public static function getClassByClassname($str) {
+        global $veh_names;
+        return $veh_names[$str];
+        
+    }
+    
+    public static function getClassnameByClass($str) {
+        global $veh_names;
+        
+        $result = array();
+        foreach ($veh_names as $classname => $class) {
+            if ($class == $str)
+                $result[] = $classname;
+        }
+        
+        return $result;
+    }
+    
+    public static function searchClassname($str) {
+        global $veh_names;
+        
+        if (empty($str))
+            return array();
+        
+        $result = array();
+        foreach ($veh_names as $classname => $class) {
+            if (strpos($class, $str) !== false) // Found a possible classname
+                $result[] = $classname;
+        }
+        
+        return $result;
+    }
+    
+    public function getClass() {
+        return Vehicle::getClassByClassname($this->classname);
     }
 }
 

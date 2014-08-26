@@ -143,7 +143,7 @@ class Player {
         if ($order != "DESC") $order = "ASC";
         $sortby = sanitize_paranoid_string($sortby);
         
-        // Is $str a uid?
+        // Is $str an uid?
         $str_n = sanitize_int($str);
         // Is $str a name/in aliases/a playerid?
         $str_s = sanitize_sql_string($str);
