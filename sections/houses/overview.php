@@ -30,8 +30,8 @@ $start = ($pagenum - 1)*$pagesize;
 // Search
 $searchstr = isset($_REQUEST['search']) ? sanitize_sql_string(urldecode($_REQUEST['search'])) : "";
 $sortby = isset($_REQUEST['sortby']) ? sanitize_sql_string(urldecode($_REQUEST['sortby'])) : "";
-if (!in_array($sortby, array("uid", "playerid", "name", "cash", "bankacc", "donatorlvl", "coplevel", "mediclevel", "rebellevel","adminlevel")))
-    $sortby = "uid";
+if (!in_array($sortby, array("id", "pid", "pos", "inventory", "containers", "owned")))
+    $sortby = "id";
 $order = isset($_REQUEST['order']) ? sanitize_sql_string(urldecode($_REQUEST['order'])) : "";
 if ($order != "ASC")
     $order = "DESC";
@@ -39,7 +39,7 @@ $count = -1;
 $searchparam = "";
 $smarty->assign('search', 0);
 if (!empty($searchstr)) {
-    $playerList = Player::searchPlayer($searchstr, $sortby, $order, $start, $pagesize, $count);
+    $houseList = House::searchHouse($searchstr, $sortby, $order, $start, $pagesize, $count);
     $searchparam = "&amp;search=".urlencode($searchstr);
     $smarty->assign('searchstring', $searchstr);
     $smarty->assign('search', 1);
@@ -49,24 +49,23 @@ if (!empty($searchstr)) {
 $pg = new bootPagination();
 $pg->pagenumber = $pagenum;
 $pg->pagesize = $pagesize;
-$pg->totalrecords = $count != -1 ? $count : Player::getPlayerDBCount();
+$pg->totalrecords = $count != -1 ? $count : House::getHouseDBCount();
 $pg->showfirst = true;
 $pg->showlast = true;
 $pg->paginationcss = "pagination-large";
 $pg->paginationstyle = 1; // 1: advance, 0: normal
-$pg->defaultUrl = "index.php?page=players&amp;action=index&amp;sortby=".$sortby."&amp;order=".$order.$searchparam;
-$pg->paginationUrl = "index.php?page=players&amp;action=index&amp;sortby=".$sortby."&amp;order=".$order."&amp;pagenum=[p]".$searchparam;
+$pg->defaultUrl = "index.php?page=houses&amp;action=index&amp;sortby=".$sortby."&amp;order=".$order.$searchparam;
+$pg->paginationUrl = "index.php?page=houses&amp;action=index&amp;sortby=".$sortby."&amp;order=".$order."&amp;pagenum=[p]".$searchparam;
 
-// Get Players (if not a search request)
+// Get Vehicles (if not a search request)
 if (empty($searchparam)) {
-    $playerList = Player::getPlayers($sortby, $order, $start, $pagesize);
-    //var_dump($playerList);
+    $houseList = House::getHouses($sortby, $order, $start, $pagesize);
 }
 
-$smarty->assign('players', $playerList);
+$smarty->assign('houses', $houseList);
 $smarty->assign('pagination', $pg->process());
 $smarty->assign('sortby', $sortby);
 $smarty->assign('order', $order);
-$smarty->display('players/overview.tpl');
+$smarty->display('houses/overview.tpl');
 $smarty->clearAllAssign();
 ?>

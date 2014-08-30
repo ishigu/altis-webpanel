@@ -60,7 +60,7 @@
                             <tr class="warning">
         {elseif $plr->getDonatorLevel() gt 0}
                             <tr class="success">
-        {elseif $plr->getRebelLevel() gt 0}
+        {elseif $plr->getRebLevel() gt 0}
                             <tr class="danger">
         {elseif $plr->getCopLevel() gt 0}
                             <tr class="info">

@@ -16,5 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-    print "Hello World<br><br>";
+require_once("include/classes/Gang.php");
+
+$page = "overview";
+if (isset($_REQUEST['action']))
+    switch (sanitize_paranoid_string($_REQUEST['action'])) {
+        case 'edit': $page = "edit"; break;
+    }
+require('sections/gangs/'.$page.'.php');
+
 ?>

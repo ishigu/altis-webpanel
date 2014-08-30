@@ -24,7 +24,7 @@
 $pagenum = isset($_REQUEST['pagenum']) ? sanitize_int($_REQUEST['pagenum']) : 1;
 if ($pagenum < 0) $pagenum = 0;
 
-$pagesize = 50; // TODO: Make it dynamic
+$pagesize = isset($_REQUEST['pagesize']) ? sanitize_int($_REQUEST['pagesize']) : 50;
 $start = ($pagenum - 1)*$pagesize;
 
 // Search
@@ -35,12 +35,11 @@ if (!in_array($sortby, array("id", "side", "classname", "type", "pid", "alive", 
 $order = isset($_REQUEST['order']) ? sanitize_sql_string(urldecode($_REQUEST['order'])) : "";
 if ($order != "ASC")
     $order = "DESC";
-$count = 0;
+$count = -1;
 $searchparam = "";
 $smarty->assign('search', 0);
 if (!empty($searchstr)) {
-    $vehicleList = Vehicle::searchVehicle($searchstr, $sortby, $order, $start, $pagesize);
-    $count = count($vehicleList);
+    $vehicleList = Vehicle::searchVehicle($searchstr, $sortby, $order, $start, $pagesize, $count);
     $searchparam = "&amp;search=".urlencode($searchstr);
     $smarty->assign('searchstring', $searchstr);
     $smarty->assign('search', 1);
@@ -50,13 +49,13 @@ if (!empty($searchstr)) {
 $pg = new bootPagination();
 $pg->pagenumber = $pagenum;
 $pg->pagesize = $pagesize;
-$pg->totalrecords = $count > 0 ? $count : Vehicle::getVehicleDBCount();
+$pg->totalrecords = $count != -1 ? $count : Vehicle::getVehicleDBCount();
 $pg->showfirst = true;
 $pg->showlast = true;
 $pg->paginationcss = "pagination-large";
 $pg->paginationstyle = 1; // 1: advance, 0: normal
-$pg->defaultUrl = "index.php?page=vehicles&amp;action=index".$searchparam;
-$pg->paginationUrl = "index.php?page=vehicles&amp;action=index&amp;pagenum=[p]".$searchparam;
+$pg->defaultUrl = "index.php?page=vehicles&amp;action=index&amp;sortby=".$sortby."&amp;order=".$order.$searchparam;
+$pg->paginationUrl = "index.php?page=vehicles&amp;action=index&amp;sortby=".$sortby."&amp;order=".$order."&amp;pagenum=[p]".$searchparam;
 
 // Get Vehicles (if not a search request)
 if (empty($searchparam)) {

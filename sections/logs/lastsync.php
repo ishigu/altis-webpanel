@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+require_once("include/logs.php");
 
 /* @var $smarty Smarty */
 /* @var $pg bootPagination */
@@ -30,8 +31,8 @@ $start = ($pagenum - 1)*$pagesize;
 // Search
 $searchstr = isset($_REQUEST['search']) ? sanitize_sql_string(urldecode($_REQUEST['search'])) : "";
 $sortby = isset($_REQUEST['sortby']) ? sanitize_sql_string(urldecode($_REQUEST['sortby'])) : "";
-if (!in_array($sortby, array("uid", "playerid", "name", "cash", "bankacc", "donatorlvl", "coplevel", "mediclevel", "rebellevel","adminlevel")))
-    $sortby = "uid";
+if (!in_array($sortby, array("last_update", "name", "uid")))
+    $sortby = "last_update";
 $order = isset($_REQUEST['order']) ? sanitize_sql_string(urldecode($_REQUEST['order'])) : "";
 if ($order != "ASC")
     $order = "DESC";
@@ -39,7 +40,7 @@ $count = -1;
 $searchparam = "";
 $smarty->assign('search', 0);
 if (!empty($searchstr)) {
-    $playerList = Player::searchPlayer($searchstr, $sortby, $order, $start, $pagesize, $count);
+    $List = searchLastSyncLog($searchstr, $sortby, $order, $start, $pagesize, $count);
     $searchparam = "&amp;search=".urlencode($searchstr);
     $smarty->assign('searchstring', $searchstr);
     $smarty->assign('search', 1);
@@ -49,24 +50,23 @@ if (!empty($searchstr)) {
 $pg = new bootPagination();
 $pg->pagenumber = $pagenum;
 $pg->pagesize = $pagesize;
-$pg->totalrecords = $count != -1 ? $count : Player::getPlayerDBCount();
+$pg->totalrecords = $count != -1 ? $count : getLastSyncLogDBCount();
 $pg->showfirst = true;
 $pg->showlast = true;
 $pg->paginationcss = "pagination-large";
 $pg->paginationstyle = 1; // 1: advance, 0: normal
-$pg->defaultUrl = "index.php?page=players&amp;action=index&amp;sortby=".$sortby."&amp;order=".$order.$searchparam;
-$pg->paginationUrl = "index.php?page=players&amp;action=index&amp;sortby=".$sortby."&amp;order=".$order."&amp;pagenum=[p]".$searchparam;
+$pg->defaultUrl = "index.php?page=logs&amp;action=lastsync&amp;sortby=".$sortby."&amp;order=".$order.$searchparam;
+$pg->paginationUrl = "index.php?page=logs&amp;action=lastsync&amp;sortby=".$sortby."&amp;order=".$order."&amp;pagenum=[p]".$searchparam;
 
 // Get Players (if not a search request)
 if (empty($searchparam)) {
-    $playerList = Player::getPlayers($sortby, $order, $start, $pagesize);
-    //var_dump($playerList);
+    $List = getLastSyncLogEntries($sortby, $order, $start, $pagesize);
 }
 
-$smarty->assign('players', $playerList);
+$smarty->assign('logs', $List);
 $smarty->assign('pagination', $pg->process());
 $smarty->assign('sortby', $sortby);
 $smarty->assign('order', $order);
-$smarty->display('players/overview.tpl');
+$smarty->display('logs/lastsync.tpl');
 $smarty->clearAllAssign();
 ?>

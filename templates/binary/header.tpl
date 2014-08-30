@@ -28,7 +28,7 @@
                 <a class="navbar-brand" href="index.php">{$username}</a> 
             </div>
             <div style="color: white; padding: 15px 50px 5px 50px; float: right; font-size: 16px;">
-                Hallo Shentoza &nbsp; <a href="#" class="btn btn-danger square-btn-adjust">Logout</a>
+                <a href="#" class="btn btn-danger square-btn-adjust">Logout</a>
             </div>
         </nav>   
         <!-- /. NAV TOP  -->

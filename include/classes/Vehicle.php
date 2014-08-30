@@ -90,7 +90,7 @@ class Vehicle {
         return get_object_vars($this);
     }
     
-    public static function searchVehicle($str, $sortby = "id", $order = "DESC", $start = 0, $count = 100) {
+    public static function searchVehicle($str, $sortby = "id", $order = "DESC", $start = 0, $count = 100, &$total = NULL) {
         global $db;
         /* @var $db PDO */
         if ($order != "DESC") $order = "ASC";
@@ -108,6 +108,16 @@ class Vehicle {
         // Search for vehicle classes (names) instead of just classnames
         $classes = Vehicle::searchClassname($str_s);
         $classes = implode(",", $classes);
+        
+        $stmt = $db->prepare('SELECT COUNT(*) FROM vehicles WHERE `side` LIKE :side OR `classname` LIKE :classname OR FIND_IN_SET( `classname`, :classes ) OR `id` = :id OR `pid` LIKE :pid OR `type` LIKE :type');
+        $stmt->bindValue(':side', $str_s, PDO::PARAM_STR);
+        $stmt->bindValue(':classname', $str_s, PDO::PARAM_STR);
+        $stmt->bindValue(':classes', $classes, PDO::PARAM_STR);
+        $stmt->bindValue(':id', $str_n, PDO::PARAM_INT);
+        $stmt->bindValue(':pid', $str_s, PDO::PARAM_STR); // pid is VARCHAR
+        $stmt->bindValue(':type', $str_s, PDO::PARAM_STR);
+        $stmt->execute();
+        $total = $stmt->fetchColumn();
 
         $stmt = $db->prepare('SELECT '.Vehicle::$fields.' FROM vehicles WHERE `side` LIKE :side OR `classname` LIKE :classname OR FIND_IN_SET( `classname`, :classes ) OR `id` = :id OR `pid` LIKE :pid OR `type` LIKE :type ORDER BY ' . $sortby . ' ' . $order . ' LIMIT :start , :count');
         $stmt->bindValue(':side', $str_s, PDO::PARAM_STR);
@@ -186,16 +196,16 @@ class Vehicle {
     
     public static function searchClassname($str) {
         global $veh_names;
-        
+
         if (empty($str))
             return array();
         
         $result = array();
         foreach ($veh_names as $classname => $class) {
-            if (strpos($class, $str) !== false) // Found a possible classname
+            if (stripos($class, $str) !== false) // Found a possible classname
                 $result[] = $classname;
         }
-        
+
         return $result;
     }
     

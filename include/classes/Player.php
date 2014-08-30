@@ -137,7 +137,7 @@ class Player {
         return str_replace(chr(96), "", implode(", ", $parsed));
     }
     
-    public static function searchPlayer($str, $sortby = "uid", $order = "DESC", $start = 0, $count = 100) {
+    public static function searchPlayer($str, $sortby = "uid", $order = "DESC", $start = 0, $count = 100, &$total = NULL) {
         global $db;
         /* @var $db PDO */
         if ($order != "DESC") $order = "ASC";
@@ -151,6 +151,14 @@ class Player {
         //Empty search?
         if (empty($str_s) && empty($str_n))
             return array(); // Return empty array
+        
+        $stmt = $db->prepare('SELECT COUNT(*) FROM players WHERE `name` LIKE :name OR `aliases` LIKE :aliases OR `uid` = :uid OR `playerid` LIKE :playerid');
+        $stmt->bindValue(':name', "%".$str_s."%", PDO::PARAM_STR);
+        $stmt->bindValue(':aliases', "%".$str_s."%", PDO::PARAM_STR);
+        $stmt->bindValue(':uid', $str_n, PDO::PARAM_INT);
+        $stmt->bindValue(':playerid', $str_s, PDO::PARAM_STR); // playerid is VARCHAR
+        $stmt->execute();
+        $total = $stmt->fetchColumn();
 
         $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players WHERE `name` LIKE :name OR `aliases` LIKE :aliases OR `uid` = :uid OR `playerid` LIKE :playerid ORDER BY ' . $sortby . ' ' . $order . ' LIMIT :start , :count');
         $stmt->bindValue(':name', "%".$str_s."%", PDO::PARAM_STR);
@@ -173,22 +181,26 @@ class Player {
         return $result;
     }
     
-    public static function getPlayerByUid($uid) {
+    public static function getPlayersByPlayerID($pids) {
         global $db;
         /* @var $db PDO */
-        $uid = parse_int(sanitize_int($uid));
+        $pids = sanitize_sql_string($pids);
 
-        $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players WHERE `uid` = :uid LIMIT 1');
-        $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+        $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players WHERE FIND_IN_SET(`playerid`, :pids)');
+        $stmt->bindValue(':pids', $pids, PDO::PARAM_INT);
         $stmt->execute();
-        
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if (count($result) == 0) return null;
-        
-        $plr = new Player();
-        $plr->fill($result[0]);
-        
-        return $plr;
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = array();
+
+        foreach ($rows as $row) {
+            $plr = new Player();
+            $plr->fill($row);
+            
+            $result[] = $plr;
+        }
+
+        return $result;
     }
     
     public static function getPlayerByPlayerID($pid) {
