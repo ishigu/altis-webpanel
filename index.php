@@ -37,6 +37,7 @@ $smarty->caching = 0;
  * Prepare to show our content
  */
 ob_start();
+$showTheme = true;
 $page = 'index'; //default page
 if (isset($_GET['page']))
 {
@@ -45,6 +46,8 @@ if (isset($_GET['page']))
         $page = $file;
 }
 $username = "ishi"; // TEMP
+if ($page == "ajax")
+    $showTheme = false;
 
 /**
  * Display header & menu
@@ -53,7 +56,8 @@ $smarty->assign('title',$title);
 $smarty->assign('theme',$theme);
 $smarty->assign('username', $username);
 $smarty->assign('page', $page);
-$smarty->display('header.tpl');
+if ($showTheme)
+    $smarty->display('header.tpl');
 $smarty->clearAllAssign();
 
 /**
@@ -64,7 +68,8 @@ require('sections/'.$page.'/index.php');
 /**
  * Display footer
  */
-$smarty->display('footer.tpl');
+if ($showTheme)
+    $smarty->display('footer.tpl');
 $smarty->clearAllAssign();
 
 ob_end_flush();

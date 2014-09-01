@@ -39,7 +39,7 @@
                                 <th><a href="index.php?page=vehicles&amp;action=index&amp;sortby=impound&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">Beschlagnahmt?{if $sortby eq "impound"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody data-link="row" class="rowlink">
 {if $vehicles|@count eq 0}
                             <tr>
                                 <td>-</td>
@@ -61,7 +61,7 @@
         {else}
                             <tr>
         {/if}
-                                <td>{$veh->getId()}</td>
+                                <td><a href="#" data-toggle="modal" data-id="{$veh->getId()}" data-target="#vehModal" ></a>{$veh->getId()}</td>
                                 <td>{$veh->getSide()}</td>
                                 <td>{$veh->getClass()}</td>
                                 <td>{$veh->getType()}</td>
@@ -77,6 +77,7 @@
                         </tbody>
                     </table>
                 </div>
+{include file='vehicles/vehModal.tpl'}
             </div>
         </div>
         <!--End Advanced Tables -->

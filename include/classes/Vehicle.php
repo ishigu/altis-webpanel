@@ -29,6 +29,7 @@ class Vehicle {
     private $color;
     private $inventory;
     private $impound;
+    private $isInDB;
     public static $fields = '`id`, `side`, `classname`, `type`, `pid`, `alive`, `active`, `plate`, `color`, `inventory`, `impound`';
 
     public function getId() { return $this->id; }
@@ -53,6 +54,7 @@ class Vehicle {
     public function setInventory($d) { $this->inventory = $d; }
     public function getImpound() { return $this->impound; }
     public function setImpound($d) { $this->impound = $d; }
+    public function IsInDB() { return $this->isInDB; }
     
     public function __construct() {
         $this->id = 0;
@@ -66,9 +68,10 @@ class Vehicle {
         $this->color = 0;
         $this->inventory = "";
         $this->impound = 0;
+        $this->isInDB = false;
     }
     
-    public function fill($data) {
+    public function fill($data, $DB = false) {
         foreach ($data as $field => $value) {
             switch ($field) {
                 case 'id': $this->id = $value; break;
@@ -84,6 +87,8 @@ class Vehicle {
                 case 'impound': $this->impound = $value; break;
             }
         }
+        if ($DB)
+            $this->isInDB = true;
     }
     
     public function toArray() {
@@ -134,7 +139,7 @@ class Vehicle {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
             $veh = new Vehicle();
-            $veh->fill($row);
+            $veh->fill($row, true);
             
             $result[] = $veh;
         }
@@ -153,6 +158,55 @@ class Vehicle {
             return $count;
     }
     
+    public static function getVehicleById($id) {
+        global $db;
+        /* @var $db PDO */
+        $id = sanitize_int($id);
+        $stmt = $db->prepare('SELECT '.Vehicle::$fields.' FROM vehicles WHERE `id` = :id');
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($result) == 0) return null;
+        
+        $veh = new Vehicle();
+        $veh->fill($result[0], true);
+        
+        return $veh;
+    }
+    
+    public function updateAndSave($fields) {
+        $this->fill($fields);
+        return $this->saveToDB();
+    }
+    
+    private function saveToDB() {
+        global $db;
+        /* @var $db PDO */
+        if ($this->isInDB()) { // UPDATE
+            $stmt = $db->prepare('UPDATE vehicles SET `side` = :side, `classname` = :classname, `type` = :type, `pid` = :pid, `alive` = :alive, `active` = :active, `plate` = :plate, `color` = :color, `inventory` = :inventory, `impound` = :impound WHERE `id` = :id');
+        } else { // INSERT
+            $stmt = $db->prepare('INSERT INTO vehicles ('.Vehicle::$fields.') VALUES (:id, :side, :classname, :type, :pid, :alive, :active, :plate, :color, :inventory, :impound)');
+        }
+        $stmt->bindValue(':id', $this->getId(), PDO::PARAM_INT);
+        $stmt->bindValue(':side', $this->getSide(), PDO::PARAM_STR);
+        $stmt->bindValue(':classname', $this->getClassname(), PDO::PARAM_STR);
+        $stmt->bindValue(':type', $this->getType(), PDO::PARAM_STR);
+        $stmt->bindValue(':pid', $this->getPid(), PDO::PARAM_STR);
+        $stmt->bindValue(':alive', $this->getAlive(), PDO::PARAM_INT);
+        $stmt->bindValue(':active', $this->getActive(), PDO::PARAM_INT);
+        $stmt->bindValue(':plate', $this->getPlate(), PDO::PARAM_INT);
+        $stmt->bindValue(':color', $this->getColor(), PDO::PARAM_INT);
+        $stmt->bindValue(':inventory', $this->getInventory(), PDO::PARAM_STR);
+        $stmt->bindValue(':impound', $this->getImpound(), PDO::PARAM_INT);
+        $count = $stmt->execute();
+        
+        if ($count > 0)
+            $this->isInDB = true;
+        
+        return $count;
+    }
+    
     public static function getVehicles($sortby = "id", $order = "DESC", $start = 0, $count = 100) {
         global $db;
         /* @var $db PDO */
@@ -168,7 +222,7 @@ class Vehicle {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
             $veh = new Vehicle();
-            $veh->fill($row);
+            $veh->fill($row, true);
             
             $result[] = $veh;
         }

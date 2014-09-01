@@ -82,4 +82,11 @@ function compileBISArray_helper($array, &$output) {
     }
 }
 
+function throwAJAXError($str) {
+    $data = array('type' => 'error', 'message' => $str);
+    header('HTTP/1.1 400 Bad Request');
+    header('Content-Type: application/json; charset=UTF-8');
+    die(json_encode($data));
+}
+
 ?>

@@ -215,3 +215,39 @@
     });
 
 }(jQuery));
+
+// Dynamic Modals
+$('#vehModal').on('show.bs.modal', function(e) {
+    //get data-id attribute of the clicked element
+    var vehId = $(e.relatedTarget).data('id');
+
+    //populate the textbox
+    $(e.currentTarget).find('#vehForm').load("index.php?page=ajax&action=editVehicle&id=" + vehId);
+});
+$("#vehSend").click(function()
+{
+	$("#vehFormForm").submit(function(e)
+	{
+		$("#vehForm").html("<img src='theme/binary/img/loading.gif'/>");
+		var postData = $(this).serializeArray();
+		var formURL = $(this).attr("action");
+		$.ajax(
+		{
+			url : formURL,
+			type: "POST",
+			data : postData,
+			success:function(data, textStatus, jqXHR) 
+			{
+				$("#vehForm").html('<pre>Erfolgreich! Ge&auml;nderte Datens&auml;tze: '+data+'</pre>');
+
+			},
+			error: function(jqXHR, textStatus, errorThrown) 
+			{
+				$("#vehForm").html('<pre>AJAX Request Failed<br/> textStatus='+textStatus+', errorThrown='+errorThrown+'</pre>');
+			}
+		});
+	    e.preventDefault();	//STOP default action
+	});
+		
+	$("#vehFormForm").submit(); //SUBMIT FORM
+});

@@ -377,3 +377,22 @@ line-height: 1.428571429;
 }
 
 
+// Rowlink
+// --------------------------------------------------
+.table.rowlink,
+.table .rowlink {
+    td:not(.rowlink-skip) {
+        cursor: pointer;
+        a {
+            color: inherit;
+            font: inherit;
+            text-decoration: inherit;
+        }
+    }
+}
+.table-hover.rowlink,
+.table-hover .rowlink {
+    tr:hover td {
+        background-color: darken(#f5f5f5, 15%);
+    }
+}
