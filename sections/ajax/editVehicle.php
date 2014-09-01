@@ -48,7 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         throwAJAXError("No row found");
     print($count);
 } else {
-    $colors = $veh_skins[$veh->getClassname()];
+    $colors = array();
+    if (array_key_exists($veh->getClassname(),$veh_names))
+        $colors = $veh_skins[$veh->getClassname()];
 
     $smarty->assign('veh', $veh);
     $smarty->assign('sides', $veh_sides);

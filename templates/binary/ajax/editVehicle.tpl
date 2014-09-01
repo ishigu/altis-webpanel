@@ -31,9 +31,13 @@
     <div class="form-group">
         <label>Farbe/Skin</label>
         <select class="form-control" name="color">
-{foreach from=$colors item=color name=vehcolor}
+{if $colors|@count eq 0}
+            <option value="{$veh->getColor()}" selected>{$veh->getColor()}</option>
+{else}
+    {foreach from=$colors item=color name=vehcolor}
             <option value="{$smarty.foreach.vehcolor.index}"{if $veh->getColor() eq $smarty.foreach.vehcolor.index} selected{/if}>{$color}</option>
-{/foreach}
+    {/foreach}
+{/if}
         </select>
     </div>
     <div class="form-group">

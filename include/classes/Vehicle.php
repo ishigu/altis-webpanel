@@ -232,8 +232,9 @@ class Vehicle {
     
     public static function getClassByClassname($str) {
         global $veh_names;
-        return $veh_names[$str];
-        
+        if (array_key_exists($str,$veh_names))
+            return $veh_names[$str];
+        return $str; // Failsafe for typos
     }
     
     public static function getClassnameByClass($str) {

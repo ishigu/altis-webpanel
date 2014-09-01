@@ -226,28 +226,27 @@ $('#vehModal').on('show.bs.modal', function(e) {
 });
 $("#vehSend").click(function()
 {
-	$("#vehFormForm").submit(function(e)
-	{
-		$("#vehForm").html("<img src='theme/binary/img/loading.gif'/>");
-		var postData = $(this).serializeArray();
-		var formURL = $(this).attr("action");
-		$.ajax(
-		{
-			url : formURL,
-			type: "POST",
-			data : postData,
-			success:function(data, textStatus, jqXHR) 
-			{
-				$("#vehForm").html('<pre>Erfolgreich! Ge&auml;nderte Datens&auml;tze: '+data+'</pre>');
+    $("#vehFormForm").submit(function(e)
+    {
+        $("#vehForm").html("<img src='theme/binary/img/loading.gif'/>");
+        var postData = $(this).serializeArray();
+        var formURL = $(this).attr("action");
+        $.ajax(
+        {
+            url : formURL,
+            type: "POST",
+            data : postData,
+            success:function(data, textStatus, jqXHR) 
+            {
+                $("#vehForm").html('<pre>Erfolgreich! Ge&auml;nderte Datens&auml;tze: '+data+'</pre>');
+            },
+            error: function(jqXHR, textStatus, errorThrown) 
+            {
+                $("#vehForm").html('<pre>AJAX Request Failed<br/> textStatus='+textStatus+', errorThrown='+errorThrown+'</pre>');
+            }
+        });
+        e.preventDefault();	//STOP default action
+    });
 
-			},
-			error: function(jqXHR, textStatus, errorThrown) 
-			{
-				$("#vehForm").html('<pre>AJAX Request Failed<br/> textStatus='+textStatus+', errorThrown='+errorThrown+'</pre>');
-			}
-		});
-	    e.preventDefault();	//STOP default action
-	});
-		
-	$("#vehFormForm").submit(); //SUBMIT FORM
+    $("#vehFormForm").submit(); //SUBMIT FORM
 });
