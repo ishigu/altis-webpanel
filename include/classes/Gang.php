@@ -26,6 +26,7 @@ class Gang {
     private $maxmembers;
     private $bank;
     private $active;
+    private $isInDB;
     public static $fields = '`id`, `owner`, `name`, `members`, `maxmembers`, `bank`, `active`';
 
     public function getId() { return $this->id; }
@@ -42,6 +43,7 @@ class Gang {
     public function setBank($d) { $this->bank = $d; }
     public function getActive() { return $this->active; }
     public function setActive($d) { $this->active = $d; }
+    public function isInDB() { return $this->isInDB; }
     
     public function __construct() {
         $this->id = 0;
@@ -51,9 +53,10 @@ class Gang {
         $this->maxmembers = 3;
         $this->bank = 0;
         $this->active = 1;
+        $this->isInDB = false;
     }
     
-    public function fill($data) {
+    public function fill($data, $DB = false) {
         foreach ($data as $field => $value) {
             switch ($field) {
                 case 'id': $this->id = $value; break;
@@ -65,6 +68,8 @@ class Gang {
                 case 'active': $this->active = $value; break;
             }
         }
+        if ($DB)
+            $this->isInDB = true;
     }
     
     public function toArray() {
@@ -107,7 +112,7 @@ class Gang {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
             $gang = new Gang();
-            $gang->fill($row);
+            $gang->fill($row, true);
             
             $result[] = $gang;
         }
@@ -141,7 +146,7 @@ class Gang {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
             $gang = new Gang();
-            $gang->fill($row);
+            $gang->fill($row, true);
             
             $result[] = $gang;
         }
@@ -158,6 +163,7 @@ class Gang {
     
     public function getMembersList() {
         $list = parseBISArray($this->members);
+        asort($list);
         return str_replace(chr(96), "", implode(", ", $list));
     }
     
@@ -171,6 +177,50 @@ class Gang {
         }
         
         return implode(", ", $names);
+    }
+    
+    public static function getGangById($id) {
+        global $db;
+        /* @var $db PDO */
+        
+        $id = sanitize_int($id);
+        $stmt = $db->prepare('SELECT '.Gang::$fields.' FROM gangs WHERE `id` = :id');
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $gang = new Gang();
+        $gang->fill($result[0], true);
+        
+        return $gang;
+    }
+    
+    public function updateAndSave($fields) {
+        $this->fill($fields);
+        return $this->saveToDB();
+    }
+    
+    private function saveToDB() {
+        global $db;
+        /* @var $db PDO */
+        if ($this->isInDB()) { // UPDATE
+            $stmt = $db->prepare("UPDATE gangs SET `owner` = :owner, `name` = :name, `members` = :members, `maxmembers` = :maxmembers, `bank` = :bank, `active` = :active WHERE `id` = :id");
+        } else { // INSERT
+            $stmt = $db->prepare("INSERT INTO gangs (".Gang::$fields.") VALUES (:id, :owner, :name, :members, :maxmembers, :bank, :active)");
+        }
+        $stmt->bindValue(':id', $this->getId(), PDO::PARAM_INT);
+        $stmt->bindValue(':owner', $this->getOwner(), PDO::PARAM_STR);
+        $stmt->bindValue(':name', $this->getName(), PDO::PARAM_STR);
+        $stmt->bindValue(':members', $this->getMembers(), PDO::PARAM_STR);
+        $stmt->bindValue(':maxmembers', $this->getMaxMembers(), PDO::PARAM_INT);
+        $stmt->bindValue(':bank', $this->getBank(), PDO::PARAM_INT);
+        $stmt->bindValue(':active', $this->getActive(), PDO::PARAM_INT);
+        $count = $stmt->execute();
+        
+        if ($count > 0)
+            $this->isInDB = true;
+        
+        return $count;
     }
 }
 

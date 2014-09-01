@@ -36,7 +36,7 @@
                                 <th><a href="index.php?page=gangs&amp;action=index&amp;sortby=active&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">Aktiv?{if $sortby eq "active"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody data-link="row" class="rowlink">
 {if $gangs|@count eq 0}
                             <tr>
                                 <td>-</td>
@@ -54,7 +54,7 @@
         {else}
                             <tr>
         {/if}
-                                <td>{$gang->getId()}</td>
+                                <td><a href="#" data-toggle="modal" data-id="{$gang->getId()}" data-target="#gangModal" ></a>{$gang->getId()}</td>
                                 <td>{$gang->getOwnerName()}</td>
                                 <td>{$gang->getName()}</td>
                                 <td>{$gang->getMembersListNames()}</td>
@@ -67,6 +67,7 @@
                         </tbody>
                     </table>
                 </div>
+{include file='gangs/gangModal.tpl'}
             </div>
         </div>
         <!--End Advanced Tables -->

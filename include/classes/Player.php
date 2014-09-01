@@ -186,7 +186,7 @@ class Player {
         /* @var $db PDO */
         $pids = sanitize_sql_string($pids);
 
-        $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players WHERE FIND_IN_SET(`playerid`, :pids)');
+        $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players WHERE FIND_IN_SET(`playerid`, :pids) ORDER BY playerid ASC');
         $stmt->bindValue(':pids', $pids, PDO::PARAM_INT);
         $stmt->execute();
 

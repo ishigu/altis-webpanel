@@ -217,6 +217,7 @@
 }(jQuery));
 
 // Dynamic Modals
+// Vehicles
 $('#vehModal').on('show.bs.modal', function(e) {
     //get data-id attribute of the clicked element
     var vehId = $(e.relatedTarget).data('id');
@@ -250,3 +251,57 @@ $("#vehSend").click(function()
 
     $("#vehFormForm").submit(); //SUBMIT FORM
 });
+
+// Gangs
+$('#gangModal').on('show.bs.modal', function(e) {
+    //get data-id attribute of the clicked element
+    var vehId = $(e.relatedTarget).data('id');
+
+    //populate the textbox
+    $(e.currentTarget).find('#gangForm').load("index.php?page=ajax&action=editGang&id=" + vehId);
+});
+$("#gangSend").click(function()
+{
+    $("#gangFormForm").submit(function(e)
+    {
+        $("#gangForm").html("<img src='theme/binary/img/loading.gif'/>");
+        var postData = $(this).serializeArray();
+        var formURL = $(this).attr("action");
+        $.ajax(
+        {
+            url : formURL,
+            type: "POST",
+            data : postData,
+            success:function(data, textStatus, jqXHR) 
+            {
+                $("#gangForm").html('<pre>Erfolgreich! Ge&auml;nderte Datens&auml;tze: '+data+'</pre>');
+            },
+            error: function(jqXHR, textStatus, errorThrown) 
+            {
+                $("#gangForm").html('<pre>AJAX Request Failed<br/> textStatus='+textStatus+', errorThrown='+errorThrown+'</pre>');
+            }
+        });
+        e.preventDefault();	//STOP default action
+    });
+
+    $("#gangFormForm").submit(); //SUBMIT FORM
+});
+
+// Remove entry from seperated list
+function removeValue(list, value, separator) {
+    separator = separator || ",";
+    var values = list.split(separator);
+    for(var i = 0 ; i < values.length ; i++) {
+        if(values[i] == value) {
+            values.splice(i, 1);
+            return values.join(separator);
+        }
+    }
+    return list;
+}
+function removeMember(id) {
+    console.log(id);
+    var list = $("#membersList").val();
+    list = removeValue(list, id, ",");
+    $("#membersList").val(list);
+}

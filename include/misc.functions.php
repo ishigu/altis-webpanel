@@ -82,6 +82,16 @@ function compileBISArray_helper($array, &$output) {
     }
 }
 
+function simpleCommaSepListToBISArray($str) {
+    $data = explode(",", str_replace(", ", ",", $str));
+    $temp = array();
+    foreach ($data as $val) {
+        $temp[] = sprintf("%s%s%s", chr(96), $val, chr(96));
+    }
+    
+    return compileBISArray($temp);
+}
+
 function throwAJAXError($str) {
     $data = array('type' => 'error', 'message' => $str);
     header('HTTP/1.1 400 Bad Request');
