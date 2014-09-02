@@ -16,41 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-require_once("include/classes/Gang.php");
+require_once("include/classes/House.php");
 /* @var $smarty Smarty */
 $id = isset($_REQUEST['id']) ? sanitize_int($_REQUEST['id']) : -1;
 if ($id < 0) throwAJAXError("Missing id");
 
-// Get Gang
-$gang = Gang::getGangByID($id);
+// Get House
+$house = House::getHouseById($id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if everythings there and valid.. id, side, classname, type, pid, alive, active, plate, color, impound
     // TODO: validation
-    if (!isset($_REQUEST['owner']) || !isset($_REQUEST['name']) || !isset($_REQUEST['members']) || !isset($_REQUEST['maxmembers']) || !isset($_REQUEST['bank']))
+    if (!isset($_REQUEST['pid']) || !isset($_REQUEST['pos']) || !isset($_REQUEST['inventory']) || !isset($_REQUEST['containers']))
         throwAJAXError("Missing Variables");    
     
-    $owner = sanitize_paranoid_string($_REQUEST['owner']);
-    $name = sanitize_sql_string($_REQUEST['name']);
-    $members = sanitize_sql_string($_REQUEST['members']);
-    $maxmembers = sanitize_int($_REQUEST['maxmembers']);
-    $bank = sanitize_int($_REQUEST['bank']);
+    $pid = sanitize_paranoid_string($_REQUEST['pid']);
+    $pos = sanitize_sql_string($_REQUEST['pos']);
+    $inventory = '"'.sanitize_sql_string($_REQUEST['inventory']).'"';
+    $containers = '"'.sanitize_sql_string($_REQUEST['containers']).'"';
 
-    $active = (isset($_REQUEST['active']) && $_REQUEST['active'] == "on") ? 1 : 0;
-    
-    $members = simpleCommaSepListToBISArray($members);
+    $owned = (isset($_REQUEST['owned']) && $_REQUEST['owned'] == "on") ? 1 : 0;
 
-    $fields = array("owner" => $owner, "name" => $name, "members" => $members, "maxmembers" => $maxmembers, "bank" => $bank, "active" => $active);
+    $fields = array("pid" => $pid, "pos" => $pos, "inventory" => $inventory, "containers" => $containers, "owned" => $owned);
     
-    $count = $gang->updateAndSave($fields);
+    $count = $house->updateAndSave($fields);
     if ($count == 0)
         throwAJAXError("No row found");
     print($count);
 } else {
-    $members = array();
-
-    $smarty->assign('gang', $gang);
-    $smarty->display('ajax/editGang.tpl');
+    $smarty->assign('house', $house);
+    $smarty->display('ajax/editHouse.tpl');
     $smarty->clearAllAssign();
 }
 ?>

@@ -25,6 +25,7 @@ class House {
     private $inventory;
     private $containers;
     private $owned;
+    private $isInDB;
     public static $fields = '`id`, `pid`, `pos`, `inventory`, `containers`, `owned`';
     
     public function getId() { return $this->id; }
@@ -39,6 +40,7 @@ class House {
     public function setContainers($d) { $this->containers = $d; }
     public function getOwned() { return $this->owned; }
     public function setOwned($d) { $this->owned = $d; }
+    public function isInDB() { return $this->isInDB; }
     
     public function __construct() {
         $this->id = 0;
@@ -47,9 +49,10 @@ class House {
         $this->inventory = "";
         $this->containers = "";
         $this->owned = 0;
+        $this->isInDB = false;
     }
     
-    public function fill($data) {
+    public function fill($data, $DB = false) {
         foreach ($data as $field => $value) {
             switch ($field) {
                 case 'id': $this->id = $value; break;
@@ -60,6 +63,8 @@ class House {
                 case 'owned': $this->owned = $value; break;
             }
         }
+        if ($DB)
+            $this->isInDB = true;
     }
     
     public function toArray() {
@@ -102,7 +107,7 @@ class House {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
             $hs = new House();
-            $hs->fill($row);
+            $hs->fill($row, true);
             
             $result[] = $hs;
         }
@@ -136,7 +141,7 @@ class House {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
             $hs = new House();
-            $hs->fill($row);
+            $hs->fill($row, true);
             
             $result[] = $hs;
         }
@@ -191,6 +196,51 @@ class House {
         
         //return str_replace(chr(96), "", implode(", ", $list));
         return implode(", ", $result);
+    }
+    
+    public static function getHouseById($id) {
+        global $db;
+        /* @var $db PDO */
+        
+        $id = sanitize_int($id);
+        $stmt = $db->prepare('SELECT '.House::$fields.' FROM houses WHERE `id` = :id');
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $house = new House();
+        $house->fill($result[0], true);
+        
+        return $house;
+    }
+    
+    public function updateAndSave($fields) {
+        $this->fill($fields);
+        return $this->saveToDB();
+    }
+    
+    private function saveToDB() {
+        global $db;
+        /* @var $db PDO */
+        
+        if ($this->isInDB()) { // UPDATE
+            $stmt = $db->prepare("UPDATE houses SET `pid` = :pid, `pos` = :pos, `inventory` = :inventory, `containers` = :containers, `owned` = :owned WHERE `id` = :id");
+        } else { // INSERT
+            $stmt = $db->prepare("INSERT INTO houses (".House::$fields.") VALUES (:id, :pid, :pos, :inventory, :containers, :owned)");
+        }
+        $stmt->bindValue(':id', $this->getId(), PDO::PARAM_INT);
+        $stmt->bindValue(':pid', $this->getPid(), PDO::PARAM_STR);
+        $stmt->bindValue(':pos', $this->getPos(), PDO::PARAM_STR);
+        $stmt->bindValue(':inventory', $this->getInventory(), PDO::PARAM_STR);
+        $stmt->bindValue(':containers', $this->getContainers(), PDO::PARAM_STR);
+        $stmt->bindValue(':owned', $this->getOwned(), PDO::PARAM_INT);
+        $count = $stmt->execute();
+        
+        if ($count > 0)
+            $this->isInDB = true;
+        
+        return $count;
     }
 }
 

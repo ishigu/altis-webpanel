@@ -35,7 +35,7 @@
                                 <th><a href="index.php?page=houses&amp;action=index&amp;sortby=owned&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">ImBesitz?{if $sortby eq "owned"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody data-link="row" class="rowlink">
 {if $houses|@count eq 0}
                             <tr>
                                 <td>-</td>
@@ -52,7 +52,7 @@
         {else}
                             <tr>
         {/if}
-                                <td>{$house->getId()}</td>
+                                <td><a href="#" data-toggle="modal" data-id="{$house->getId()}" data-target="#houseModal"></a>{$house->getId()}</td>
                                 <td>{$house->getOwnerName()}</td>
                                 <td>{$house->getPos()}</td>
                                 <td>{$house->getInventoryList()}</td>
@@ -64,6 +64,7 @@
                         </tbody>
                     </table>
                 </div>
+{include file='houses/houseModal.tpl'}
             </div>
         </div>
         <!--End Advanced Tables -->

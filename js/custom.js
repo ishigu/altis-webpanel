@@ -255,10 +255,10 @@ $("#vehSend").click(function()
 // Gangs
 $('#gangModal').on('show.bs.modal', function(e) {
     //get data-id attribute of the clicked element
-    var vehId = $(e.relatedTarget).data('id');
+    var gangId = $(e.relatedTarget).data('id');
 
     //populate the textbox
-    $(e.currentTarget).find('#gangForm').load("index.php?page=ajax&action=editGang&id=" + vehId);
+    $(e.currentTarget).find('#gangForm').load("index.php?page=ajax&action=editGang&id=" + gangId);
 });
 $("#gangSend").click(function()
 {
@@ -285,6 +285,41 @@ $("#gangSend").click(function()
     });
 
     $("#gangFormForm").submit(); //SUBMIT FORM
+});
+
+// Houses
+$('#houseModal').on('show.bs.modal', function(e) {
+    //get data-id attribute of the clicked element
+    var houseId = $(e.relatedTarget).data('id');
+
+    //populate the textbox
+    $(e.currentTarget).find('#houseForm').load("index.php?page=ajax&action=editHouse&id=" + houseId);
+});
+$("#houseSend").click(function()
+{
+    $("#houseFormForm").submit(function(e)
+    {
+        $("#houseForm").html("<img src='theme/binary/img/loading.gif'/>");
+        var postData = $(this).serializeArray();
+        var formURL = $(this).attr("action");
+        $.ajax(
+        {
+            url : formURL,
+            type: "POST",
+            data : postData,
+            success:function(data, textStatus, jqXHR) 
+            {
+                $("#houseForm").html('<pre>Erfolgreich! Ge&auml;nderte Datens&auml;tze: '+data+'</pre>');
+            },
+            error: function(jqXHR, textStatus, errorThrown) 
+            {
+                $("#houseForm").html('<pre>AJAX Request Failed<br/> textStatus='+textStatus+', errorThrown='+errorThrown+'</pre>');
+            }
+        });
+        e.preventDefault();	//STOP default action
+    });
+
+    $("#houseFormForm").submit(); //SUBMIT FORM
 });
 
 // Remove entry from seperated list

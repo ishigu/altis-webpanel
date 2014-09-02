@@ -22,6 +22,7 @@ if (isset($_REQUEST['action']))
     switch (sanitize_paranoid_string($_REQUEST['action'])) {
         case 'editVehicle': $page = "editVehicle"; break;
         case 'editGang': $page = "editGang"; break;
+        case 'editHouse': $page = "editHouse"; break;
     }
 require('sections/ajax/'.$page.'.php');
 
