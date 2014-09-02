@@ -18,6 +18,12 @@
  */
 define('SMARTY_DIR', str_replace("\\","/",getcwd()).'/libs/Smarty/');
 $db = new PDO('mysql:dbname=arma3life;host=127.0.0.1', "arma", "password");
+$paneldb = new PDO('mysql:dbname=webpanel;host=127.0.0.1', "panel", "password");
+define('SECRET_KEY', ""); // Used for login cookies
+define('COOKIE_EXPIRATION', 86400); // Login cookie expiration
+define('COOKIE_AUTH', "awp_c"); // Login cookie name
+define('COOKIE_PATH', "/");
+define('COOKIE_DOMAIN', "");
 
 $theme = "binary";
 $title = "Westerland Altis Life Panel";

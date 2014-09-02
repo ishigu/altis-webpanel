@@ -21,6 +21,7 @@ require(SMARTY_DIR . "Smarty.class.php");
 require("libs/sanitize.lib.php");
 require("libs/BootPagination/pagination.php");
 require("include/misc.functions.php");
+require("include/classes/PanelUser.php");
 
 /**
  * Initialize Libraries
@@ -45,9 +46,22 @@ if (isset($_GET['page']))
     if (file_exists('sections/'.$file.'/index.php'))
         $page = $file;
 }
-$username = "ishi"; // TEMP
+$action = (isset($_GET['action'])) ? sanitize_paranoid_string($_GET['action']) : "";
+$username = "Gast";
 if ($page == "ajax")
     $showTheme = false;
+
+/**
+ * Are we logged in?
+ */
+// Try cookie login
+$user = PanelUser::verifyCookie();
+if ($user == null) { // Cookie Login failed
+    $public = true;
+    $page = "login";
+} else {
+    $username = $user->getUsername();
+}
 
 /**
  * Display header & menu
@@ -56,8 +70,12 @@ $smarty->assign('title',$title);
 $smarty->assign('theme',$theme);
 $smarty->assign('username', $username);
 $smarty->assign('page', $page);
+$smarty->assign('action', $action);
 if ($showTheme)
-    $smarty->display('header.tpl');
+    if (isset($public))
+        $smarty->display('headerPublic.tpl');
+    else
+        $smarty->display('header.tpl');
 $smarty->clearAllAssign();
 
 /**

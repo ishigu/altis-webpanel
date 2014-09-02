@@ -25,10 +25,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.php">{$username}</a> 
-            </div>
-            <div style="color: white; padding: 15px 50px 5px 50px; float: right; font-size: 16px;">
-                <a href="index.php?page=login&amp;action=logout" class="btn btn-danger square-btn-adjust">Logout</a>
+                <a class="navbar-brand" href="index.php">Gast</a> 
             </div>
         </nav>   
         <!-- /. NAV TOP  -->
@@ -39,31 +36,11 @@
                         <img src="theme/{$theme}/img/find_user.png" class="user-image img-responsive"/>
                     </li>
                     <li>
-                        <a href="index.php?page=index"{if $page == "index"} class="active-menu"{/if}><i class="fa fa-dashboard fa-3x"></i> &Uuml;bersicht</a>
+                        <a href="index.php?page=login&action=login"{if $action == "login"} class="active-menu"{/if}><i class="fa fa-exchange fa-3x"></i> Login</a>
                     </li>
                     <li>
-                        <a href="index.php?page=vehicles"{if $page == "vehicles"} class="active-menu"{/if}><i class="fa fa-car fa-3x"></i> Fahrzeuge</a>
+                        <a href="index.php?page=login&action=register"{if $action == "register"} class="active-menu"{/if}><i class="fa fa-pencil fa-3x"></i> Registrieren</a>
                     </li>
-                    <li>
-                        <a href="index.php?page=gangs"{if $page == "gangs"} class="active-menu"{/if}><i class="fa fa-group fa-3x"></i> Gangs</a>
-                    </li>
-                    <li>
-                        <a href="index.php?page=houses"{if $page == "houses"} class="active-menu"{/if}><i class="fa fa-home fa-3x"></i> H&auml;user</a>
-                    </li>
-                    <li>
-                        <a href="index.php?page=players"{if $page == "players"} class="active-menu"{/if}><i class="fa fa-male fa-3x"></i> Spieler</a>
-                    </li>	
-                    <li>
-                        <a href="#"{if $page == "logs"} class="active-menu"{/if}><i class="fa fa-gavel fa-3x"></i> Logs<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="index.php?page=logs&action=money">Player Update Log</a>
-                            </li>
-                            <li>
-                                <a href="index.php?page=logs&action=lastsync">Player Last Sync</a>
-                            </li>
-                        </ul>
-                      </li>
                 </ul>
             </div>
         </nav>  

@@ -99,4 +99,8 @@ function throwAJAXError($str) {
     die(json_encode($data));
 }
 
+function redirect($url) {
+    header("Location: ".$url);
+    die();
+}
 ?>

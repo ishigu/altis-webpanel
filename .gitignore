@@ -1,4 +1,4 @@
 config.inc.php
+nbproject/private/
 libs/Smarty/*
 cache/*
-nbproject/private/private.xml
