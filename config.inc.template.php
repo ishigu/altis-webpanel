@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 define('SMARTY_DIR', str_replace("\\","/",getcwd()).'/libs/Smarty/');
-$db = new PDO('mysql:dbname=arma3life;host=127.0.0.1', "arma", "password");
+$db = new PDO('mysql:dbname=arma3life;host=127.0.0.1;charset=latin1', "arma", "password");
 $paneldb = new PDO('mysql:dbname=webpanel;host=127.0.0.1', "panel", "password");
 define('SECRET_KEY', ""); // Used for login cookies
 define('COOKIE_EXPIRATION', 86400); // Login cookie expiration

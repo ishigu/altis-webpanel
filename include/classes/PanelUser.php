@@ -94,10 +94,10 @@ class PanelUser {
         
         if ($this->isInDB()) { // UPDATE
             $stmt = $paneldb->prepare("UPDATE users SET `username` = :username, `password` = :password, `salt` = :salt, `playerid` = :playerid WHERE `id` = :id");
+            $stmt->bindValue(':id', $this->getId(), PDO::PARAM_INT);
         } else { // INSERT
             $stmt = $paneldb->prepare("INSERT INTO users (".PanelUser::$fields.") VALUES (:username, :password, :salt, :playerid, '0')");
         }
-        $stmt->bindValue(':id', $this->getId(), PDO::PARAM_INT);
         $stmt->bindValue(':username', $this->getUsername(), PDO::PARAM_STR);
         $stmt->bindValue(':password', $this->getPasswordHash(), PDO::PARAM_STR);
         $stmt->bindValue(':salt', $this->getSalt(), PDO::PARAM_STR);

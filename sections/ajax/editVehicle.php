@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     print($count);
 } else {
     $colors = array();
-    if (array_key_exists($veh->getClassname(),$veh_names))
+    if (array_key_exists($veh->getClassname(),$veh_skins))
         $colors = $veh_skins[$veh->getClassname()];
 
     $smarty->assign('veh', $veh);
