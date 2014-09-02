@@ -23,6 +23,7 @@ if (isset($_REQUEST['action']))
         case 'editVehicle': $page = "editVehicle"; break;
         case 'editGang': $page = "editGang"; break;
         case 'editHouse': $page = "editHouse"; break;
+        case 'editPlayer': $page = "editPlayer"; break;
     }
 require('sections/ajax/'.$page.'.php');
 

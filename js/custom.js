@@ -322,6 +322,41 @@ $("#houseSend").click(function()
     $("#houseFormForm").submit(); //SUBMIT FORM
 });
 
+// Players
+$('#playerModal').on('show.bs.modal', function(e) {
+    //get data-id attribute of the clicked element
+    var playerId = $(e.relatedTarget).data('id');
+
+    //populate the textbox
+    $(e.currentTarget).find('#playerForm').load("index.php?page=ajax&action=editPlayer&uid=" + playerId);
+});
+$("#playerSend").click(function()
+{
+    $("#playerFormForm").submit(function(e)
+    {
+        $("#playerForm").html("<img src='theme/binary/img/loading.gif'/>");
+        var postData = $(this).serializeArray();
+        var formURL = $(this).attr("action");
+        $.ajax(
+        {
+            url : formURL,
+            type: "POST",
+            data : postData,
+            success:function(data, textStatus, jqXHR) 
+            {
+                $("#playerForm").html('<pre>Erfolgreich! Ge&auml;nderte Datens&auml;tze: '+data+'</pre>');
+            },
+            error: function(jqXHR, textStatus, errorThrown) 
+            {
+                $("#playerForm").html('<pre>AJAX Request Failed<br/> textStatus='+textStatus+', errorThrown='+errorThrown+'</pre>');
+            }
+        });
+        e.preventDefault();	//STOP default action
+    });
+
+    $("#playerFormForm").submit(); //SUBMIT FORM
+});
+
 // Remove entry from seperated list
 function removeValue(list, value, separator) {
     separator = separator || ",";

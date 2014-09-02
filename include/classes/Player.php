@@ -38,6 +38,7 @@ class Player {
     private $blacklist;
     private $reb_gear;
     private $rebellevel;
+    private $isInDB;
     public static $fields = '`uid`, `name`, `playerid`, `cash`, `bankacc`, `coplevel`, `cop_licenses`, `civ_licenses`, `med_licenses`, `cop_gear`, `mediclevel`, `arrested`, `aliases`, `adminlevel`, `donatorlvl`, `civ_gear`, `blacklist`, `reb_gear`, `rebellevel`';
     
     public function getUID() { return $this->uid; }
@@ -78,6 +79,7 @@ class Player {
     public function setRebGear($d) { $this->reb_gear = $d; }
     public function getRebLevel() { return $this->rebellevel; }
     public function setRebLevel($d) { $this->rebellevel = $d; }
+    public function isInDB() { return $this->isInDB; }
     
     public function __construct() {
         $this->uid = 0;
@@ -99,9 +101,10 @@ class Player {
         $this->blacklist = 0;
         $this->reb_gear = "";
         $this->rebellevel = "0";
+        $this->isInDB = false;
     }
     
-    public function fill($data) {
+    public function fill($data, $DB = false) {
         foreach ($data as $field => $value) {
             switch ($field) {
                 case 'uid': $this->uid = $value; break;
@@ -125,6 +128,8 @@ class Player {
                 case 'rebellevel': $this->rebellevel = $value; break;
             }
         }
+        if ($DB)
+            $this->isInDB = true;
     }
     
     public function toArray() {
@@ -173,7 +178,7 @@ class Player {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
             $plr = new Player();
-            $plr->fill($row);
+            $plr->fill($row, true);
             
             $result[] = $plr;
         }
@@ -195,7 +200,7 @@ class Player {
 
         foreach ($rows as $row) {
             $plr = new Player();
-            $plr->fill($row);
+            $plr->fill($row, true);
             
             $result[] = $plr;
         }
@@ -216,7 +221,25 @@ class Player {
         if (count($result) == 0) return null;
         
         $plr = new Player();
-        $plr->fill($result[0]);
+        $plr->fill($result[0], true);
+        
+        return $plr;
+    }
+    
+    public static function getPlayerByUID($uid) {
+        global $db;
+        /* @var $db PDO */
+        $uid = sanitize_paranoid_string($uid);
+
+        $stmt = $db->prepare('SELECT '.Player::$fields.' FROM players WHERE `uid` = :uid LIMIT 1');
+        $stmt->bindValue(':uid', $uid, PDO::PARAM_STR);
+        $stmt->execute();
+        
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($result) == 0) return null;
+        
+        $plr = new Player();
+        $plr->fill($result[0], true);
         
         return $plr;
     }
@@ -247,7 +270,7 @@ class Player {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
             $plr = new Player();
-            $plr->fill($row);
+            $plr->fill($row, true);
             
             $result[] = $plr;
         }
@@ -262,6 +285,47 @@ class Player {
             $result[] = $plr->toArray();
         
         return $result;
+    }
+    
+    public function updateAndSave($fields) {
+        $this->fill($fields);
+        return $this->saveToDB();
+    }
+    
+    private function saveToDB() {
+        global $db;
+        /* @var $db PDO */
+        
+        if ($this->isInDB()) { // UPDATE
+            $stmt = $db->prepare("UPDATE players SET `name` = :name, `playerid` = :playerid, `cash` = :cash, `bankacc` = :bankacc, `coplevel` = :coplevel, `cop_licenses` = :cop_licenses, `civ_licenses` = :civ_licenses, `med_licenses` = :med_licenses, `cop_gear` = :cop_gear, `mediclevel` = :mediclevel, `arrested` = :arrested, `aliases` = :aliases, `adminlevel` = :adminlevel, `donatorlvl` = :donatorlvl, `civ_gear` = :civ_gear, `blacklist` = :blacklist, `reb_gear` = :reb_gear, `rebellevel` = :rebellevel WHERE `uid` = :uid");
+        } else { // INSERT
+            $stmt = $db->prepare("INSERT INTO players (".Player::$fields.") VALUES (:name, :playerid, :cash, :bankacc, :coplevel, :cop_licenses, :civ_licenses, :med_licenses, :cop_gear, :mediclevel, :arrested, :aliases, :adminlevel, :donatorlvl, :civ_gear, :blacklist, :reb_gear, :rebellevel)");
+        }
+        $stmt->bindValue(':uid', $this->getUID(), PDO::PARAM_INT);
+        $stmt->bindValue(':name', $this->getName(), PDO::PARAM_STR);
+        $stmt->bindValue(':playerid', $this->getPlayerID(), PDO::PARAM_STR);
+        $stmt->bindValue(':cash', $this->getCash(), PDO::PARAM_INT);
+        $stmt->bindValue(':bankacc', $this->getBankAcc(), PDO::PARAM_INT);
+        $stmt->bindValue(':coplevel', $this->getCopLevel(), PDO::PARAM_STR);
+        $stmt->bindValue(':cop_licenses', $this->getCopLicenses(), PDO::PARAM_STR);
+        $stmt->bindValue(':civ_licenses', $this->getCivLicenses(), PDO::PARAM_STR);
+        $stmt->bindValue(':med_licenses', $this->getMedLicenses(), PDO::PARAM_STR);
+        $stmt->bindValue(':cop_gear', $this->getCopGear(), PDO::PARAM_STR);
+        $stmt->bindValue(':mediclevel', $this->getMedicLevel(), PDO::PARAM_STR);
+        $stmt->bindValue(':arrested', $this->getArrested(), PDO::PARAM_INT);
+        $stmt->bindValue(':aliases', $this->getAliases(), PDO::PARAM_STR);
+        $stmt->bindValue(':adminlevel', $this->getAdminLevel(), PDO::PARAM_STR);
+        $stmt->bindValue(':donatorlvl', $this->getDonatorLevel(), PDO::PARAM_STR);
+        $stmt->bindValue(':civ_gear', $this->getCivGear(), PDO::PARAM_STR);
+        $stmt->bindValue(':blacklist', $this->getBlacklist(), PDO::PARAM_INT);
+        $stmt->bindValue(':reb_gear', $this->getRebGear(), PDO::PARAM_STR);
+        $stmt->bindValue(':rebellevel', $this->getRebLevel(), PDO::PARAM_STR);
+        $count = $stmt->execute();
+        
+        if ($count > 0)
+            $this->isInDB = true;
+        
+        return $count;
     }
 }
 

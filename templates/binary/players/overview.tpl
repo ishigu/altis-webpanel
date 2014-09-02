@@ -40,7 +40,7 @@
                                 <th><a href="index.php?page=players&amp;action=index&amp;sortby=adminlevel&amp;order={if $order eq "ASC"}DESC{else}ASC{/if}">AdminLevel{if $sortby eq "adminlevel"}<span class="glyphicon {if $order eq "ASC"}glyphicon-chevron-up{else}glyphicon-chevron-down{/if}" style=""></span>{/if}</a></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody data-link="row" class="rowlink">
 {if $players|@count eq 0}
                             <tr>
                                 <td>-</td>
@@ -67,7 +67,7 @@
         {else}
                             <tr>
         {/if}
-                                <td>{$plr->getUid()}</td>
+                                <td><a href="#" data-toggle="modal" data-id="{$plr->getUid()}" data-target="#playerModal"></a>{$plr->getUid()}</td>
                                 <td>{$plr->getPlayerID()}</td>
                                 <td>{$plr->getName()}</td>
                                 <td>{$plr->parseAliases()}</td>
@@ -84,6 +84,7 @@
                         </tbody>
                     </table>
                 </div>
+{include file='players/playerModal.tpl'}
             </div>
         </div>
         <!--End Advanced Tables -->
