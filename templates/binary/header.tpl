@@ -63,7 +63,10 @@
                                 <a href="index.php?page=logs&action=lastsync">Player Last Sync</a>
                             </li>
                         </ul>
-                      </li>
+                    </li>
+                    <li>
+                        <a href="index.php?page=backup"{if $page == "backup"} class="active-menu"{/if}><i class="fa fa-book fa-3x"></i> Backups</a>
+                    </li>
                 </ul>
             </div>
         </nav>  

@@ -24,6 +24,7 @@ define('COOKIE_EXPIRATION', 86400); // Login cookie expiration
 define('COOKIE_AUTH', "awp_c"); // Login cookie name
 define('COOKIE_PATH', "/");
 define('COOKIE_DOMAIN', "");
+define('SQL_PATH', "/bla");
 
 $theme = "binary";
 $title = "Westerland Altis Life Panel";
@@ -150,20 +151,20 @@ $veh_names = array(
 
 $veh_skins = array(
     "C_Offroad_01_F" => array("Rot","Gelb","Weiss","Blau","Dunkel Rot","Blau / Weiss","Polizei","Taxi","Polizei","Greenfoot","Tussy","Hard Work","Mario","Monster","Nyan","Pokemon","ADAC","Schwarz Metallic"),
-    "I_Heli_light_03_unarmed_F" => array("Angry","Angry","Polizei","Rebel Green"),
+    "I_Heli_light_03_unarmed_F" => array("Angry","Polizei","Rebel Green"),
     "B_Heli_Transport_01_F" => array("Polizei"),
     "C_Hatchback_01_F" => array("Beige","Gruen","Blau","Dunkel Blau","Gelb","Weiss","Grau","Schwarz","Pimp","Hello Kitty","Pimp Blue","Metallica","Polizei","Schwarz Metallic","Schwarz"),
     "C_Hatchback_01_sport_F" => array("Rot","Dunkel Blau","Orange","Schwarz / Weiss","Tan","Gruen","Schwarz Metallic","Schwarz","Polizei"),
-    "C_SUV_01_F" => array("Schwarz","Silver","Orange","Weiss","Polizei","Carbon","Carbon / Felgen","RageCore","Batman","Superman","Notarzt","Schwarz Metallic","Schwarz"),
+    "C_SUV_01_F" => array("Schwarz","Silver","Orange","Weiss","Polizei","RageCore","Batman","Superman","Notarzt","Schwarz Metallic","Schwarz"),
     "C_Van_01_box_F" => array("Weiss","Rot"),
     "C_Van_01_transport_F" => array("Weiss","Rot"),
     "C_Van_01_fuel_F" => array("Weiss","Rot"),
     "B_Quadbike_01_F" => array("Braun","Digital Braun","Schwarz","Blau","Rot","Weiss","Digital Gruen","Hunter Camo","Rebell Camo"),
     "B_Heli_Light_01_F" => array("Polizei","Polizei","Civ Blue","Civ Red","Digi Green","Blueline","Elliptical","Furious","Jeans Blue","Speedy Redline","Sunset","Vrana","Waves Blue","Rebellen Digital","Gruen/Braun","Weed"),
-    "O_Heli_Light_02_unarmed_F" => array("Polizei","Weiss / Blau","Digital Gruen","Digital Braun","Weiss / Gruen","Weiss / Orange","Weiss / Grau","Schwarz","Notarzt","Adac"),
+    "O_Heli_Light_02_unarmed_F" => array("Polizei","Weiss / Blau","Digital Gruen","Digital Braun","Schwarz","Notarzt","Adac"),
     "B_MRAP_01_F" => array("Polizei"),
     "I_MRAP_03_F" => array("Regular","Camo","Sand"),
-    "O_MRAP_02_F" => array("Black","Death","Sand","GoldGelb","BluePixel"),
+    "O_MRAP_02_F" => array("Black","Death","Sand"),
     "I_Truck_02_covered_F" => array("Rot","Schwarz","Blau","Gruen","Orange"),
     "I_Truck_02_transport_F" => array("Rot","Schwarz","Blau","Gruen","Orange","Rebellen Digital"),
     "O_Heli_Attack_02_black_F" => array("Black"),
