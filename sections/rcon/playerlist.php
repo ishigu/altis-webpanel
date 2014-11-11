@@ -20,8 +20,7 @@ require_once("libs/ArmaRcon/RconClient.php");
 require_once("include/classes/Player.php");
 /* @var $smarty Smarty */
 
-$rcon = new RconClient("gameserver.westerland-altis.de", 2302, "trikitakei_2014!!0815");
-//$rcon = new RconClient("localhost", 2302, "xyz");
+$rcon = new RconClient(RCON_IP, RCON_PORT, RCON_PASS);
 $rcon->connect();
 $playerListRaw = $rcon->sendCommand("players");
 $rcon->disconnect();

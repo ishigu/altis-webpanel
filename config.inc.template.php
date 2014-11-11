@@ -26,6 +26,9 @@ define('COOKIE_PATH', "/");
 define('COOKIE_DOMAIN', "");
 define('SQL_PATH', "/bla");
 define('BANS_PATH', "/path/to/Bans.txt");
+define('RCON_IP', "localhost");
+define('RCON_PORT', 2302);
+define('RCON_PASS', "abcdef");
 
 $theme = "binary";
 $title = "Westerland Altis Life Panel";
