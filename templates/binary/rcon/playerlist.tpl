@@ -19,11 +19,11 @@
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Name</th>
+                                <th>Ping</th>
                                 <th>IP</th>
                                 <th>Port</th>
-                                <th>Ping</th>
                                 <th>GUID</th>
-                                <th>Name</th>
                             </tr>
                         </thead>
                         <tbody data-link="row" class="rowlink">
@@ -40,11 +40,11 @@
     {foreach from=$players item=plr}
                             <tr>
                                 <td>{$plr.num}</td>
+                                <td>{$plr.name}</td>
+                                <td>{$plr.ping}</td>
                                 <td>{$plr.ip}</td>
                                 <td>{$plr.port}</td>
-                                <td>{$plr.ping}</td>
                                 <td>{$plr.guid}</td>
-                                <td>{$plr.name}</td>
                             </tr>
     {/foreach}
 {/if}
