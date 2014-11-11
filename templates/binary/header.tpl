@@ -52,9 +52,20 @@
                     </li>
                     <li>
                         <a href="index.php?page=players"{if $page == "players"} class="active-menu"{/if}><i class="fa fa-male fa-3x"></i> Spieler</a>
-                    </li>	
+                    </li>
                     <li>
-                        <a href="#"{if $page == "logs"} class="active-menu"{/if}><i class="fa fa-gavel fa-3x"></i> Logs<span class="fa arrow"></span></a>
+                        <a href="#"{if $page == "rcon"} class="active-menu"{/if}><i class="fa fa-gavel fa-3x"></i> RCON<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="index.php?page=rcon&action=playerlist">Spielerliste</a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=rcon&action=bans">Bans</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"{if $page == "logs"} class="active-menu"{/if}><i class="fa fa-eye fa-3x"></i> Logs<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
                                 <a href="index.php?page=logs&action=money">Player Update Log</a>

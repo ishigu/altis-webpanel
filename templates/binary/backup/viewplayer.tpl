@@ -1,4 +1,4 @@
-<form role="form" id="playerFormForm" action="index.php?page=ajax&action=editPlayer" method="POST">
+<form role="form" id="backupPlayerForm">
     <div class="form-group">
         <h4>Zeitpunkt: {$time}</h4>
     </div>

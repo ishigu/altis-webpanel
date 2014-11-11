@@ -25,6 +25,7 @@ define('COOKIE_AUTH', "awp_c"); // Login cookie name
 define('COOKIE_PATH', "/");
 define('COOKIE_DOMAIN', "");
 define('SQL_PATH', "/bla");
+define('BANS_PATH', "/path/to/Bans.txt");
 
 $theme = "binary";
 $title = "Westerland Altis Life Panel";
@@ -156,7 +157,7 @@ $veh_skins = array(
     "C_Hatchback_01_F" => array("Beige","Gruen","Blau","Dunkel Blau","Gelb","Weiss","Grau","Schwarz","Pimp","Hello Kitty","Pimp Blue","Metallica","Polizei","Schwarz Metallic","Schwarz"),
     "C_Hatchback_01_sport_F" => array("Rot","Dunkel Blau","Orange","Schwarz / Weiss","Tan","Gruen","Schwarz Metallic","Schwarz","Polizei"),
     "C_SUV_01_F" => array("Schwarz","Silver","Orange","Weiss","Polizei","RageCore","Batman","Superman","Notarzt","Schwarz Metallic","Schwarz"),
-    "C_Van_01_box_F" => array("Weiss","Rot"),
+    "C_Van_01_box_F" => array("Weiss","Rot","RTW"),
     "C_Van_01_transport_F" => array("Weiss","Rot"),
     "C_Van_01_fuel_F" => array("Weiss","Rot"),
     "B_Quadbike_01_F" => array("Braun","Digital Braun","Schwarz","Blau","Rot","Weiss","Digital Gruen","Hunter Camo","Rebell Camo"),
